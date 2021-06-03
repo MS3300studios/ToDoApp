@@ -148,11 +148,11 @@ void saveDataToFile(toDo *firstNode){
         else{
             toDo *currentEl = firstNode;
             while(currentEl){
-                printf("%s", currentEl->toDo);
                 fputs(currentEl->toDo, file);
                 currentEl = currentEl->next;
             }
             fclose(file);
+            printf("data successfully saved!\n");
         }
     }
     else if(choice == 0){
@@ -215,12 +215,9 @@ int main() {
                     if(result==1){
                         printf("such number does not exist!\n");
                     }
-                    // else{
-                        // printf("\nsuccessfully deleted\n");
-                    // }
                     system("pause");
-                    // sleep(2);
-                    // system("cls");
+                    sleep(2);
+                    system("cls");
                     break;
                 case 3:
                     PrintList(first);
@@ -229,6 +226,8 @@ int main() {
                     break;
                 case 4:
                     saveDataToFile(first);
+                    sleep(2);
+                    system("cls");
                     break;
                 case 0:
                     printf("thank you for using the program!");
