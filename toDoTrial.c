@@ -54,6 +54,7 @@ int removeToDo(int number, toDo *firstItem){
                 if(currentNode->next==NULL){
                     current = currentNode;
                 }
+                currentNode = currentNode->next;
             }
             break;
         }
@@ -128,6 +129,41 @@ void initialFetchData(void){
     fclose(file);
 }
 
+void saveDataToFile(toDo *firstNode){
+    printf("your current todos: \n");
+    PrintList(first);
+    printf("____________________________________________\n");
+    printf("are you sure you want to overwrite the data?\n");
+    printf("|1. yes\n");
+    printf("|0. no\n");
+    int choice;
+    scanf("%d", &choice);
+    if(choice==1){
+        FILE *file = fopen("todos.txt", "w");
+        if(file == NULL){
+            printf("critical error, could not find source file. Closing program in 4 seconds\n");
+            sleep(4);
+            exit(1); //1 = error;
+        }
+        else{
+            toDo *currentEl = firstNode;
+            while(currentEl){
+                printf("%s", currentEl->toDo);
+                fputs(currentEl->toDo, file);
+                currentEl = currentEl->next;
+            }
+            fclose(file);
+        }
+    }
+    else if(choice == 0){
+        //...
+    }
+    else{
+        printf("that is not a correct number. Choose either 1 or 0!\n");
+    }
+
+}
+
 int main() {  
     initialFetchData(); 
     int choice;
@@ -192,7 +228,7 @@ int main() {
                     system("cls");
                     break;
                 case 4:
-
+                    saveDataToFile(first);
                     break;
                 case 0:
                     printf("thank you for using the program!");
