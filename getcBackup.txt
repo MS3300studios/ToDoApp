@@ -1,0 +1,32 @@
+int sentence[maxString];
+        int count = 0; //count for sentence
+        while((sentence[count] = getc(file)) != EOF){
+            if(sentence[count] == '\n'){
+                //save sentence to list, clear sentence, continue loop.
+                if(first == NULL){
+                    char charSentence[count+1];
+                    for(int i=0; i<=count; i++){
+                        charSentence[i] = sentence[i];
+                        printf("%c", charSentence[i]);
+                    }
+                    first = addToDo(charSentence);
+                    if(first!=NULL){ //if success
+                        current = first;
+                        count=0; //resetting count
+                    }
+                }
+                else{
+                    char charSentence[count+1];
+                    for(int i=0; i<=count; i++){
+                        charSentence[i] = sentence[i];
+                        printf("%c", charSentence[i]);
+                    }
+                    current->next = addToDo(charSentence);
+                    if(current->next != NULL){ //if success
+                        current = current -> next; //assign new current
+                        count=0; //resetting count
+                    }
+                }
+            }
+            count++;
+        }

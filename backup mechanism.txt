@@ -1,0 +1,28 @@
+//putting each sentence into array
+        letter = getc(file);
+        while(letter != EOF){
+            while(letter!='\n'){
+                sentence[count] = letter;
+                count++;
+                letter = getc(file);
+            }//when 'new line' break; -> sentence will contain 1 sentence. Letter contains
+            //the last letter.
+
+
+            //saving sentence to list
+            if(first == NULL){
+                first = addToDo(sentence);
+                if(first!=NULL){ //if success
+                    current = first; 
+                }
+            }
+            else{
+                current->next = addToDo(sentence);
+                if(current->next != NULL){ //if success
+                    current = current -> next; //assign new current
+                }
+            }
+            printf("%c", letter);
+        }
+
+        fclose(file);

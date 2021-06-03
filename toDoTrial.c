@@ -3,14 +3,22 @@
 #include <string.h>
 #include <unistd.h>
 #include <conio.h>
+#include <stdlib.h>
 
 #define maxString 50 
+
 
 typedef struct toDo {
     char toDo[maxString];
     struct toDo *next;
 } toDo;
 
+//global variables
+toDo *first = NULL;
+toDo *current = NULL;
+
+//reserve memory, fill memory with data, return pointer to filled memory 
+//!!! the 'next' value is filled outside of this function
 toDo *addToDo(char input[maxString]){
     toDo *newTodo = NULL;
     newTodo = malloc(sizeof(toDo));
@@ -21,8 +29,40 @@ toDo *addToDo(char input[maxString]){
     else{
         printf("allocating memory error");
     }
-    printf("added todo: \ntext: \"%s\" \nadress: %p\n", newTodo->toDo, newTodo);
     return newTodo;
+}
+
+int removeToDo(int number, toDo *firstItem){
+    toDo *currentNode = firstItem;
+    toDo *nextNode = currentNode->next; 
+
+    if(number==1){
+        printf("deleting: %s", currentNode->toDo);
+        first = currentNode->next;
+        free(currentNode);
+        return 0;
+    }
+    int count = 1;
+    //while current is not null
+    while(currentNode){ 
+        if(count == number-1){
+            currentNode->next = currentNode->next->next; //excluding node from pointer path
+            printf("\n deleting: %s",nextNode->toDo);
+            free(nextNode);
+            //setting global current pointer to the end of the list
+            while(currentNode){
+                if(currentNode->next==NULL){
+                    current = currentNode;
+                }
+            }
+            break;
+        }
+        
+        currentNode = currentNode->next;
+        nextNode = currentNode->next;
+        count++;
+    }
+    return 0;
 }
 
 void printToDo(toDo *element, int num){
@@ -30,7 +70,8 @@ void printToDo(toDo *element, int num){
             printf("%s is NULL\n", element);
         }
     else{
-        printf("%d) name: \"%s\" | adress: %p | next adress: %p\n",
+        printf("-------------------------------------\n");
+        printf("%d)\nname: %sadress: %p \nnext adress: %p\n",
             num,
             element->toDo,
             element,
@@ -57,18 +98,47 @@ void PrintList(toDo *firstItem){
     }
 }
 
-int main() {   
-    toDo *first = NULL;
-    toDo *current = NULL;
+void initialFetchData(void){
+    FILE *file = fopen("todos.txt", "r");
 
+    //getting data from file
+    if(file == NULL){
+        printf("critical error, could not find source file. Closing program in 4 seconds\n");
+        sleep(4);
+        exit(1); //1 = error;
+    }
+    else{ 
+        char sentence[maxString];
+        while(fgets(sentence, maxString, file)) {
+            if(first == NULL){
+                first = addToDo(sentence);
+                if(first!=NULL){ //if success
+                    current = first;
+                }
+            }
+            else{
+                current->next = addToDo(sentence);
+                if(current->next != NULL){ //if success
+                    current = current -> next; //assign new current
+                }
+            }
+        } 
+        
+    }
+    fclose(file);
+}
+
+int main() {  
+    initialFetchData(); 
     int choice;
 
     while(1){
-        printf("\n\n----------------------------\n");
+        printf("----------------------------\n");
         printf("|ENTER THE ACCORDING NUMBER\n");
         printf("|1. Add todo\n");
         printf("|2. Remove todo\n");
         printf("|3. View todos\n");
+        printf("|4. Save todos\n");
         printf("|0. Exit\n");
         printf(">");
         int result = scanf("%d", &choice);
@@ -76,13 +146,14 @@ int main() {
             switch (choice)
             {
                 case 1: {
-                    printf("enter your todos (limit: %d characters), press # to stop adding todos\n", maxString);
+                    printf("enter your todo (limit: %d characters)\n", maxString);
                     char userInput[maxString];
                     getchar();
-                    gets(userInput);
+                    fgets(userInput, maxString, stdin);
                     if(first == NULL){
                         first = addToDo(userInput);
                         if(first!=NULL){ //if success
+                            printf("%s",first->toDo);
                             current = first; 
                         }
                     }
@@ -98,14 +169,30 @@ int main() {
                     break;
                 }
                 case 2:
-                    printf("\nremoving element");
-                    sleep(2);
                     system("cls");
+                    PrintList(first);
+                    printf("\n===================\n");
+                    printf("which todo would you like to remove? Type the number:\n");
+                    int toBeDeleted;
+                    scanf("%d", &toBeDeleted);
+                    int result = removeToDo(toBeDeleted, first);
+                    if(result==1){
+                        printf("such number does not exist!\n");
+                    }
+                    // else{
+                        // printf("\nsuccessfully deleted\n");
+                    // }
+                    system("pause");
+                    // sleep(2);
+                    // system("cls");
                     break;
                 case 3:
                     PrintList(first);
                     system("pause");
                     system("cls");
+                    break;
+                case 4:
+
                     break;
                 case 0:
                     printf("thank you for using the program!");
@@ -114,7 +201,9 @@ int main() {
                     break;
                 
                 default:
-                    printf("incorrect command, type 1, 2, 3, or if you want to exit: 0\n");
+                    printf("incorrect command, type 1, 2, 3, 4, or if you want to exit: 0\n");
+                    system("pause");
+                    system("cls");
                     break;
             }
         }
@@ -125,11 +214,5 @@ int main() {
         }
         
     }
-
     return 0;
 }
-
-
-// first = addToDo("wdadwadadawd");
-
-// printToDo(first, 0);
