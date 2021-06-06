@@ -164,8 +164,74 @@ void saveDataToFile(toDo *firstNode){
 
 }
 
+void sort(int tab[], int n, int order) //n=size, order: 1 -> descending, order: 0 -> ascending
+{
+    for (int i=1; i<n; i++)
+    {
+        int key = tab[i];
+        int j = i-1;
+        //desc
+        if(order==1){
+            while (key>tab[j] && j>=0)
+            {
+                tab[j+1] = tab[j];
+                --j;
+            }
+            tab[j+1] = key;
+        }
+        //asc
+        else if(order==0){
+            while (key<tab[j] && j>=0)
+            {
+                tab[j+1] = tab[j];
+                --j;
+            }
+            tab[j+1] = key;
+        }
+        
+    }
+}
+
+void printArray(int tab[], int n){
+    for(int i=0; i<n; i++){
+        printf("%d) %d\n", i, tab[i]);
+    }
+}
+
+void getAndSortNumbers() {
+    int size;
+    printf("enter the amount of numbers\n>");
+    scanf("%d", &size);
+    int numbers[size];
+    for(int i=0; i<size; i++){
+        printf("%d) number: ", i);
+        scanf("%d", &numbers[i]);
+    }
+    int choice;
+    printf("\n-------|choose an option|------\n");
+    printf("|1. sort numbers in ascending order\n");
+    printf("|2. sort numbers in descending order\n");
+    printf(">");
+    scanf("%d", &choice);
+    switch (choice)
+    {
+        case 1:
+            sort(numbers, size, 0);
+            printArray(numbers, size);
+            break;
+        case 2:
+            sort(numbers, size, 1);
+            printArray(numbers, size);
+            break;
+        default:
+            printf("incorrect input.\n");
+            break;
+    }
+}
+
+
 int main() {  
-    initialFetchData(); 
+    initialFetchData(); //fetching data on init from file
     int choice;
 
     while(1){
@@ -175,6 +241,7 @@ int main() {
         printf("|2. Remove todo\n");
         printf("|3. View todos\n");
         printf("|4. Save todos\n");
+        printf("|5. Sort Numbers\n");
         printf("|0. Exit\n");
         printf(">");
         int result = scanf("%d", &choice);
@@ -227,6 +294,12 @@ int main() {
                 case 4:
                     saveDataToFile(first);
                     sleep(2);
+                    system("cls");
+                    break;
+                case 5:
+                    getAndSortNumbers();
+                    sleep(2);
+                    system("pause");
                     system("cls");
                     break;
                 case 0:
